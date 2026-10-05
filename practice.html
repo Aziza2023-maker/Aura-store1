@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الويب الاحترافية | Code & Compass</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            navy: '#1e293b',
+                            purple: '#6366f1',
+                            accent: '#38bdf8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* تفعيل التمرير السلس للانتقال بين الأقسام */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header & Navbar (تم رفع z-index ليكون فوق جميع الأقسام أثناء التمرير) -->
+    <header class="sticky top-0 z-50 bg-slate-900/85 backdrop-blur-md border-b border-slate-800">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- زر فتح الـ Sidebar (أيقونة جانبية) + الشعار -->
+            <div class="flex items-center gap-4">
+                <button id="sidebarToggle" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors focus:outline-none" aria-label="فتح القائمة الجانبية">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-sky-400 flex items-center justify-center font-bold text-xl shadow-lg shadow-indigo-500/20">
+                        C
+                    </div>
+                    <span class="text-xl font-bold tracking-wide text-white">Code<span class="text-sky-400">&</span>Compass</span>
+                </div>
+            </div>
+
+            <!-- الروابط الأساسية -->
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#hero" class="hover:text-sky-400 transition-colors">الرئيسية</a>
+                <a href="#visual-designs" class="hover:text-sky-400 transition-colors">معرض التصاميم</a>
+                <a href="#main-content" class="hover:text-sky-400 transition-colors">المقالات</a>
+                <button onclick="toggleSidebar()" class="hover:text-sky-400 transition-colors text-right">التصنيفات</button>
+                <a href="#footer" class="hover:text-sky-400 transition-colors">اتصل بنا</a>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="relative hidden sm:block w-64">
+                <input type="text" id="searchInput" placeholder="ابحث عن مقال أو تقنية..." 
+                    class="w-full bg-slate-800/60 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+                <span class="absolute left-3 top-2.5 text-slate-400 text-xs">⌘K</span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sidebar (قائمة جانبية منبثقة غنية بالمواضيع) -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+    <aside id="sidebarDrawer" class="fixed top-0 right-0 bottom-0 w-80 bg-slate-900 border-l border-slate-800 z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 flex flex-col justify-between shadow-2xl">
+        <div class="overflow-y-auto max-h-[calc(100vh-80px)] space-y-4">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                    المواضيع والتصنيفات
+                </h3>
+                <button id="sidebarClose" class="p-2 text-slate-400 hover:text-white rounded-lg bg-slate-800/50">
+                    ✕
+                </button>
+            </div>
+            
+            <ul class="space-y-2.5 text-sm">
+                <li><a href="#" class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 text-slate-200 transition-all"><span>قواعد البيانات و SQL</span><span class="text-xs bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded">12</span></a></li>
+                <li><a href="#" class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 text-slate-200 transition-all"><span>هندسة النظم الخلفية</span><span class="text-xs bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded">8</span></a></li>
+                <li><a href="#" class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 text-slate-200 transition-all"><span>تصميم تجربة المستخدم UI/UX</span><span class="text-xs bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded">5</span></a></li>
+                <li><a href="#" class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 text-slate-200 transition-all"><span>أتمتة العمليات البرمجية</span><span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded">9</span></a></li>
+                <li><a href="#" class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 text-slate-200 transition-all"><span>أمن المعلومات والشبكات</span><span class="text-xs bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded">7</span></a></li>
+                <li><a href="#" class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 text-slate-200 transition-all"><span>الذكاء الاصطناعي والبيانات</span><span class="text-xs bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded">14</span></a></li>
+            </ul>
+        </div>
+
+        <div class="pt-6 border-t border-slate-800 text-xs text-slate-500 text-center">
+            منصة Code & Compass الهندسية.
+        </div>
+    </aside>
+
+    <!-- Hero Section مع Carousel تفاعلي -->
+    <section id="hero" class="relative overflow-hidden py-16 lg:py-24 border-b border-slate-900 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <div class="relative overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl">
+                
+                <div id="carouselTrack" class="flex transition-transform duration-500 ease-out">
+                    
+                    <!-- الشريحة الأولى -->
+                    <div class="w-full flex-shrink-0 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center p-8 lg:p-12">
+                        <div class="space-y-6 text-right">
+                            <span class="inline-block py-1 px-3 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold">
+                                ✨ المنصة الهندسية الأولى للبرمجيات المتقدمة
+                            </span>
+                            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                                هندسة البرمجيات وقواعد البيانات <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-sky-400">بعين خبيرة</span>
+                            </h1>
+                            <p class="text-base sm:text-lg text-slate-400 font-light leading-relaxed">
+                                نصنع محتوى تقنياً عميقاً يربط النظريات الأكاديمية بالتطبيقات العملية الحديثة في قواعد البيانات وهندسة النظم الخلفية.
+                            </p>
+                            <div class="flex flex-wrap gap-4 pt-2">
+                                <a href="#main-content" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-sm">
+                                    استكشف المحتوى
+                                </a>
+                                <button onclick="toggleSidebar()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-medium px-6 py-3 rounded-xl transition-all text-sm">
+                                    عرض المواضيع
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 shadow-inner">
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop" alt="هندسة البرمجيات" class="w-full h-72 sm:h-80 object-cover">
+                        </div>
+                    </div>
+
+                    <!-- الشريحة الثانية -->
+                    <div class="w-full flex-shrink-0 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center p-8 lg:p-12">
+                        <div class="space-y-6 text-right">
+                            <span class="inline-block py-1 px-3 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold">
+                                🚀 تصميم الواجهات وتجربة المستخدم
+                            </span>
+                            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                                واجهات رقمية مريحة بصرياً <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">ومصممة لتدوم</span>
+                            </h1>
+                            <p class="text-base sm:text-lg text-slate-400 font-light leading-relaxed">
+                                استكشف أحدث دراسات واجهات الاستخدام الداكنة ونسب التباين لتحقيق أقصى درجات الراحة البصرية للمطورين والمستخدمين.
+                            </p>
+                            <div class="flex flex-wrap gap-4 pt-2">
+                                <a href="#visual-designs" class="bg-purple-600 hover:bg-purple-500 text-white font-medium px-6 py-3 rounded-xl shadow-lg shadow-purple-600/30 transition-all text-sm">
+                                    تصفح التصاميم المرئية
+                                </a>
+                            </div>
+                        </div>
+                        <div class="relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 shadow-inner">
+                            <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=1000&auto=format&fit=crop" alt="تصميم واجهات المستخدم" class="w-full h-72 sm:h-80 object-cover">
+                        </div>
+                    </div>
+
+                    <!-- الشريحة الثالثة -->
+                    <div class="w-full flex-shrink-0 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center p-8 lg:p-12">
+                        <div class="space-y-6 text-right">
+                            <span class="inline-block py-1 px-3 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                                ⚡ الأتمتة وهندسة النظم الخلفية
+                            </span>
+                            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                                أتمتة الأنظمة المعقدة <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">بأعلى كفاءة</span>
+                            </h1>
+                            <p class="text-base sm:text-lg text-slate-400 font-light leading-relaxed">
+                                تعلم كيفية بناء خطوط أنابيب بيانات متطورة باستخدام بايثون وخدمات الـ Webhooks لتسريع إنجاز المهام البرمجية.
+                            </p>
+                            <div class="flex flex-wrap gap-4 pt-2">
+                                <a href="#main-content" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl shadow-lg shadow-emerald-600/30 transition-all text-sm">
+                                    اقرأ مقالات الأتمتة
+                                </a>
+                            </div>
+                        </div>
+                        <div class="relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 shadow-inner">
+                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" alt="هندسة النظم والأتمتة" class="w-full h-72 sm:h-80 object-cover">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- أزرار التنقل السريعة للسلايدر -->
+                <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-slate-800/80 hover:bg-slate-700 text-white p-3 rounded-full backdrop-blur-md transition-all shadow-lg focus:outline-none" aria-label="الشريحة السابقة">
+                    ❮
+                </button>
+                <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-slate-800/80 hover:bg-slate-700 text-white p-3 rounded-full backdrop-blur-md transition-all shadow-lg focus:outline-none" aria-label="الشريحة التالية">
+                    ❯
+                </button>
+
+                <!-- مؤشرات النقاط -->
+                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    <button onclick="goToSlide(0)" class="w-3 h-3 rounded-full bg-indigo-500 transition-all dot-indicator" aria-label="انتقل للشريحة 1"></button>
+                    <button onclick="goToSlide(1)" class="w-3 h-3 rounded-full bg-slate-700 transition-all dot-indicator" aria-label="انتقل للشريحة 2"></button>
+                    <button onclick="goToSlide(2)" class="w-3 h-3 rounded-full bg-slate-700 transition-all dot-indicator" aria-label="انتقل للشريحة 3"></button>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- قسم معرض التصاميم المرئية -->
+    <section id="visual-designs" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full border-b border-slate-900 z-10 relative">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-8">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                معرض التصاميم المرئية ونماذج العمل
+            </h2>
+            <span class="text-sm text-slate-400">نماذج بصرية تفاعلية وهندسة واجهات</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- تصميم 1 -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden group hover:border-purple-500/50 transition-all">
+                <div class="h-48 overflow-hidden bg-slate-950">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop" alt="تصميم واجهة داكنة" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-6 space-y-3">
+                    <span class="text-xs px-2.5 py-1 rounded bg-purple-500/10 text-purple-400 font-medium">Dark UI System</span>
+                    <h3 class="text-lg font-bold text-white">نظام الألوان الداكنة المتدرجة</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">توزيع تدرجات الـ Slate والـ Indigo للحد من إجهاد العين أثناء العمل الهندسي الطويل.</p>
+                </div>
+            </div>
+
+            <!-- تصميم 2 -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden group hover:border-purple-500/50 transition-all">
+                <div class="h-48 overflow-hidden bg-slate-950">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop" alt="هندسة قواعد البيانات" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-6 space-y-3">
+                    <span class="text-xs px-2.5 py-1 rounded bg-sky-500/10 text-sky-400 font-medium">Database ERD</span>
+                    <h3 class="text-lg font-bold text-white">مخططات العلاقات البصرية (ERD)</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">تصميم بصري متطور لهيكلة الجداول والقيود العلائقية لمنظومة قواعد البيانات المعقدة.</p>
+                </div>
+            </div>
+
+            <!-- تصميم 3 -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden group hover:border-purple-500/50 transition-all">
+                <div class="h-48 overflow-hidden bg-slate-950">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop" alt="أتمتة الأنظمة" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-6 space-y-3">
+                    <span class="text-xs px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 font-medium">Workflows</span>
+                    <h3 class="text-lg font-bold text-white">هندسة خطوط أنابيب البيانات</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">تمثيل بصري لمسارات تدفق البيانات وتكامل الـ Webhooks بين الأنظمة المختلفة.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Section (المقالات الموسعة) -->
+    <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full flex-grow z-10 relative">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-8">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                أحدث المقالات والمواضيع التقنية
+            </h2>
+            <span class="text-sm text-slate-400">6 مقالات علمية منشورة</span>
+        </div>
+
+        <!-- شبكة المقالات -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="articlesGrid">
+            
+            <!-- مقال 1 -->
+            <article class="group bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-indigo-500/50 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-md bg-sky-500/10 text-sky-400 text-xs font-medium">SQL Server</span>
+                        <span class="text-xs text-slate-500">قبل يومين</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors mb-3">
+                        هندسة العلاقات في قواعد البيانات: تحسين أداء الاستعلامات المعقدة
+                    </h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        كيف تتجنب الاختناقات البرمجية عند تصميم الجداول العلائقية، وقياس كفاءة الفهارس في المشاريع الضخمة.
+                    </p>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-800/60 text-xs text-slate-400">
+                    <span>قراءة في 6 دقائق</span>
+                    <button onclick="openModal('SQL Server', 'هندسة العلاقات في قواعد البيانات: تحسين أداء الاستعلامات المعقدة', 'تُعتبر هندسة قواعد البيانات العلائقية (Relational Databases) الركيزة الأساسية لأي نظام برمجي قابل للتوسع (Scalable). يعاني العديد من المطورين من بطء الاستعلامات (Queries) عند نمو حجم البيانات، ويرجع ذلك غالباً إلى سوء تطبيع الجداول (Normalization) أو الافتقار إلى الفهارس الصحيحة (Indexing).\n\n1. دور الفهارس (B-Trees): الفهرس ليس مجرد مفتاح، بل هو هيكل شجري يتيح لمحرك قاعدة البيانات الوصول إلى البيانات دون الحاجة لعملية المسح الكامل (Table Scan).\n\n2. تجنب العبارات غير الفعالة: استخدام SELECT * يعرض النظام لنقل بيانات زائدة عبر الشبكة. الأفضل دائماً جلب الحقول المطلوبة بدقة.\n\n3. قياس الأداء: استخدام أدوات مثل Execution Plan يساعد بشكل مباشر في تتبع العمليات ذات التكلفة العالية ومعالجتها هندسياً.')" class="text-indigo-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer">اقرأ المقال كاملاً ←</button>
+                </div>
+            </article>
+
+            <!-- مقال 2 -->
+            <article class="group bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-indigo-500/50 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-md bg-purple-500/10 text-purple-400 text-xs font-medium">UI/UX Design</span>
+                        <span class="text-xs text-slate-500">قبل 4 أيام</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors mb-3">
+                        أهمية الألوان الداكنة في واجهات المستخدم المريحة بصرياً
+                    </h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        دراسة تحليلية لنسب التباين وتدرجات الألوان الفضفاضة لتقليل إجهاد العين أثناء العمل الليلي المكثف.
+                    </p>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-800/60 text-xs text-slate-400">
+                    <span>قراءة في 4 دقائق</span>
+                    <button onclick="openModal('UI/UX Design', 'أهمية الألوان الداكنة في واجهات المستخدم المريحة بصرياً', 'مع تزايد ساعات العمل الرقمي، أصبح تصميم الواجهات الداكنة (Dark Mode) ضرورة وليست مجرد رفاهية بصرية. يعتمد التصميم الاحترافي على دراسة علمية لنسب التباين (Contrast Ratios) بحسب معايير الـ WCAG.\n\n1. تجنب السواد التام (#000000): السواد المطلق يسبب ظاهرة تسمى Halation (تشوش الحواف الحادة للنصوص البيضاء فوقها). الاستخدام الصحيح يتضمن درجات الـ Slate الداكنة.\n\n2. درجات التباين المتدرجة: إعطاء الهرمية البصرية عبر تدرجات النصوص (من text-slate-100 إلى text-slate-400) يوجه عين المستخدم بسلاسة دون تشتيت.')" class="text-indigo-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer">اقرأ المقال كاملاً ←</button>
+                </div>
+            </article>
+
+            <!-- مقال 3 -->
+            <article class="group bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-indigo-500/50 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-xs font-medium">Backend Python</span>
+                        <span class="text-xs text-slate-500">قبل أسبوع</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors mb-3">
+                        أتمتة سير العمل البرمجي باستخدام Python و Webhooks
+                    </h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        دليلك العملي لربط الأنظمة الخلفية وتتبع البيانات اللحظية دون الحاجة لتدخل يدوي متكرر في المنظومة.
+                    </p>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-800/60 text-xs text-slate-400">
+                    <span>قراءة في 8 دقائق</span>
+                    <button onclick="openModal('Backend Python', 'أتمتة سير العمل البرمجي باستخدام Python و Webhooks', 'تعتبر الأتمتة عصب الكفاءة في تطوير البرمجيات المعاصرة. من خلال دمج لغة بايثون مع آليات الـ Webhooks، يمكن بناء خطوط أنابيب بيانات (Data Pipelines) تتفاعل لحظياً مع الأحداث الخارجية.\n\n1. ما هو الـ Webhook؟ هو إشعار HTTP POST يتم إرساله تلقائياً من نظام لآخر عند وقوع حدث معين.\n\n2. معالجة الأخطاء والـ Retries: عند بناء أنظمة الأتمتة، يجب مراعاة حالات فشل الاتصال بالشبكة عبر آليات إعادة المحاولة الذكية Exponential Backoff لضمان عدم ضياع أي بيانات حرجة.')" class="text-indigo-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer">اقرأ المقال كاملاً ←</button>
+                </div>
+            </article>
+
+            <!-- مقال 4 -->
+            <article class="group bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-indigo-500/50 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-md bg-rose-500/10 text-rose-400 text-xs font-medium">System Architecture</span>
+                        <span class="text-xs text-slate-500">قبل 10 أيام</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors mb-3">
+                        هندسة الخدمات المصغرة (Microservices) مقابل النظم المتجانسة (Monolith)
+                    </h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        متى يجب عليك الانتقال من البنية المتجانسة التقليدية إلى هندسة الخدمات المصغرة المعقدة؟
+                    </p>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-800/60 text-xs text-slate-400">
+                    <span>قراءة في 10 دقائق</span>
+                    <button onclick="openModal('System Architecture', 'هندسة الخدمات المصغرة (Microservices) مقابل النظم المتجانسة (Monolith)', 'القرارات المعمارية في بداية المشروع تحدد عمره الافتراضي وقدرته على تحمل الضغط. النظم المتجانسة ممتازة للشركات الناشئة لسرعة التطوير، بينما الخدمات المصغرة توفر استقلالية النشر والتطوير عند كبر حجم الفريق.\n\n1. تعقيد الشبكة والاتصالات: في الـ Microservices، تتحول استدعاءات الدوال البرمجية المحلية (Function Calls) إلى طلبات شبكية عبر بروتوكولات HTTP أو gRPC، مما يرفع من أهمية مراقبة الأداء (Observability).\n\n2. توزيع القواعد البيانات: كل خدمة مصغرة يجب أن تمتلك قاعدة بياناتها الخاصة لضمان الاستقلالية التامة.')" class="text-indigo-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer">اقرأ المقال كاملاً ←</button>
+                </div>
+            </article>
+
+            <!-- مقال 5 -->
+            <article class="group bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-indigo-500/50 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-md bg-amber-500/10 text-amber-400 text-xs font-medium">Security</span>
+                        <span class="text-xs text-slate-500">قبل أسبوعين</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors mb-3">
+                        تأمين واجهات البرمجة (APIs): أفضل الممارسات ضد الهجمات السيبرانية
+                    </h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        دليل شامل لحماية الـ REST APIs ضد ثغرات الحقن، هجمات حجب الخدمة، وإدارة الصلاحيات عبر JWT.
+                    </p>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-800/60 text-xs text-slate-400">
+                    <span>قراءة في 7 دقائق</span>
+                    <button onclick="openModal('Security', 'تأمين واجهات البرمجة (APIs): أفضل الممارسات ضد الهجمات السيبرانية', 'تعتبر الـ APIs البوابة الرئيسية لاختراق الأنظمة الحديثة إن لم يتم حمايتها وفق المعايير العالمية المعتمدة مثل OWASP Top 10.\n\n1. التحقق والتوثيق (Authentication): استخدام الـ JSON Web Tokens (JWT) مع تحديد وقت انتهاء صلاحية قصير (Short-lived tokens) يقلل من مخاطر سرقة الجلسات.\n\n2. تحديد المعدل (Rate Limiting): منع هجمات القوة العمياء (Brute Force) عبر تقييد عدد الطلبات المسموح بها لكل عنوان IP خلال فترة زمنية محددة.')" class="text-indigo-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer">اقرأ المقال كاملاً ←</button>
+                </div>
+            </article>
+
+            <!-- مقال 6 -->
+            <article class="group bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-indigo-500/50 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-md bg-indigo-500/10 text-indigo-400 text-xs font-medium">Performance</span>
+                        <span class="text-xs text-slate-500">قبل 3 أسابيع</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors mb-3">
+                        تحسين سرعة تحميل تطبيقات الويب الحديثة (Web Performance)
+                    </h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        استراتيجيات متقدمة لإدارة الذاكرة المؤقتة، ضغط الأصول، وتحسين مقاييس Core Web Vitals.
+                    </p>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-800/60 text-xs text-slate-400">
+                    <span>قراءة في 5 دقائق</span>
+                    <button onclick="openModal('Performance', 'تحسين سرعة تحميل تطبيقات الويب الحديثة (Web Performance)', 'سرعة الاستجابة هي الفارق الحقيقي بين نجاح المنصة وفشلها في الاحتفاظ بالمستخدمين. مقاييس مثل Largest Contentful Paint (LCP) و Cumulative Layout Shift (CLS) هي المعيار الحالي.\n\n1. التخزين المؤقت (Caching): الاستفادة من شبكات توزيع المحتوى (CDNs) وتفعيل التخزين المؤقت للبيانات الثابتة.\n\n2. تحميل الصور الكسول (Lazy Loading): تأجيل تحميل الصور والعناصر التي ليست في نطاق الرؤية المباشرة للمستخدم لتحسين سرعة التحميل الأولية.')" class="text-indigo-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer">اقرأ المقال كاملاً ←</button>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <!-- Modal النافذة المنبثقة لقراءة المقال الكامل -->
+    <div id="articleModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <!-- رأس النافذة -->
+            <div class="flex items-center justify-between p-6 border-b border-slate-800 bg-slate-950/50">
+                <span id="modalCategory" class="px-3 py-1 rounded-md bg-indigo-500/10 text-indigo-400 text-xs font-medium">التصنيف</span>
+                <button onclick="closeModal()" class="p-2 text-slate-400 hover:text-white rounded-lg bg-slate-800/50 transition-colors">✕</button>
+            </div>
+            <!-- محتوى المقال العلمي -->
+            <div class="p-6 overflow-y-auto space-y-4 text-slate-300 text-sm leading-relaxed">
+                <h3 id="modalTitle" class="text-2xl font-bold text-white leading-snug">عنوان المقال</h3>
+                <div id="modalBody" class="space-y-4 whitespace-pre-line border-t border-slate-800/60 pt-4 font-light">
+                    <!-- نص المقال الكامل -->
+                </div>
+            </div>
+            <!-- تذييل النافذة -->
+            <div class="p-4 bg-slate-950/50 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
+                <span>موثق ومعتمد من منصة Code & Compass</span>
+                <button onclick="closeModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg transition-colors">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer" class="bg-slate-900 border-t border-slate-800 pt-16 pb-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800">
+            
+            <div class="lg:col-span-2 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-sky-400 flex items-center justify-center font-bold text-lg text-white">
+                        C
+                    </div>
+                    <span class="text-lg font-bold text-white">Code<span class="text-sky-400">&</span>Compass</span>
+                </div>
+                <p class="text-sm text-slate-400 max-w-sm leading-relaxed">
+                    منصة تقنية متخصصة تقدم مقالات هندسية متقدمة في قواعد البيانات، هندسة النظم وتصميم الواجهات الاحترافية.
+                </p>
+                <div class="flex items-center gap-4 pt-2">
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-indigo-600 transition-all">🐦</a>
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-indigo-600 transition-all">💼</a>
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-indigo-600 transition-all">💻</a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">روابط سريعة</h4>
+                <ul class="space-y-2 text-sm text-slate-400">
+                    <li><a href="#hero" class="hover:text-sky-400 transition-colors">الرئيسية</a></li>
+                    <li><a href="#visual-designs" class="hover:text-sky-400 transition-colors">معرض التصاميم</a></li>
+                    <li><a href="#main-content" class="hover:text-sky-400 transition-colors">المقالات التقنية</a></li>
+                    <li><a href="#" onclick="toggleSidebar()" class="hover:text-sky-400 transition-colors">التصنيفات</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">التقنيات</h4>
+                <ul class="space-y-2 text-sm text-slate-400">
+                    <li><a href="#" class="hover:text-sky-400 transition-colors">قواعد البيانات</a></li>
+                    <li><a href="#" class="hover:text-sky-400 transition-colors">هندسة النظم</a></li>
+                    <li><a href="#" class="hover:text-sky-400 transition-colors">Tailwind CSS</a></li>
+                    <li><a href="#" class="hover:text-sky-400 transition-colors">Python Backend</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">النشرة البريدية</h4>
+                <p class="text-xs text-slate-400 mb-3">اشترك ليصلك كل جديد في عالم البرمجة.</p>
+                <form onsubmit="event.preventDefault(); alert('تم الاشتراك بنجاح!');" class="space-y-2">
+                    <input type="email" placeholder="بريدك الإلكتروني" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium py-2 rounded-lg transition-colors">
+                        انضم الآن
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <p>© 2026 Code & Compass. جميع الحقوق محفوظة.</p>
+            <div class="flex items-center gap-6">
+                <a href="#" class="hover:text-slate-300 transition-colors">سياسة الخصوصية</a>
+                <a href="#" class="hover:text-slate-300 transition-colors">شروط الاستخدام</a>
+                <a href="#" class="hover:text-slate-300 transition-colors">الأمان</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 3;
+        const carouselTrack = document.getElementById('carouselTrack');
+        const dots = document.querySelectorAll('.dot-indicator');
+
+        function updateCarousel() {
+            carouselTrack.style.transform = `translateX(${currentSlide * 100}%)`;
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.remove('bg-slate-700');
+                    dot.classList.add('bg-indigo-500');
+                } else {
+                    dot.classList.remove('bg-indigo-500');
+                    dot.classList.add('bg-slate-700');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarousel();
+        }
+
+        let slideInterval = setInterval(nextSlide, 5000);
+
+        const heroSection = document.getElementById('hero');
+        heroSection.addEventListener('mouseenter', () => clearInterval(slideInterval));
+        heroSection.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 5000));
+
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const sidebarDrawer = document.getElementById('sidebarDrawer');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleSidebar() {
+            sidebarDrawer.classList.toggle('translate-x-full');
+            sidebarOverlay.classList.toggle('hidden');
+        }
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        sidebarClose.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        const articleModal = document.getElementById('articleModal');
+        const modalCategory = document.getElementById('modalCategory');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+
+        function openModal(category, title, body) {
+            modalCategory.innerText = category;
+            modalTitle.innerText = title;
+            modalBody.innerText = body;
+            articleModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            articleModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        articleModal.addEventListener('click', function(e) {
+            if (e.target === articleModal) {
+                closeModal();
+            }
+        });
+
+        const searchInput = document.getElementById('searchInput');
+        const articlesGrid = document.getElementById('articlesGrid');
+        const articles = articlesGrid.getElementsByTagName('article');
+
+        searchInput.addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase().trim();
+            for (let i = 0; i < articles.length; i++) {
+                const text = articles[i].innerText.toLowerCase();
+                if (text.includes(term)) {
+                    articles[i].style.display = "";
+                } else {
+                    articles[i].style.display = "none";
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>SaaS Kanban Workflow</title>
+    <style>
+        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; padding: 30px; }
+        .board { display: flex; gap: 20px; justify-content: center; max-width: 900px; margin: auto; }
+        .column { background: #1e293b; width: 30%; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); min-height: 350px; display: flex; flex-direction: column; }
+        .column h4 { margin-top: 0; border-bottom: 2px solid #334155; padding-bottom: 10px; color: #94a3b8; text-align: center; }
+        .task-list { list-style: none; padding: 0; flex-grow: 1; }
+        .task-card { background: #334155; padding: 10px; margin-bottom: 10px; border-radius: 6px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .controls { max-width: 900px; margin: 20px auto; background: #1e293b; padding: 15px; border-radius: 8px; display: flex; gap: 10px; }
+        input { flex-grow: 1; padding: 8px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 4px; }
+        button { padding: 8px 15px; background: #6366f1; border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #4f46e5; }
+        .move-btn { background: #0ea5e9; font-size: 12px; padding: 3px 6px; border: none; color: white; border-radius: 3px; cursor: pointer; }
+        .move-btn:hover { background: #0284c7; }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <input type="text" id="boardInput" placeholder="أدخل مشروعاً أو مهمة جديدة...">
+    <button id="addBoardBtn">إضافة للوحة</button>
+</div>
+
+<div class="board">
+    <!-- عمود قيد الانتظار -->
+    <div class="column" data-status="todo">
+        <h4>قيد الانتظار (To Do)</h4>
+        <ul class="task-list" id="todoList"></ul>
+    </div>
+    <!-- عمود قيد التنفيذ -->
+    <div class="column" data-status="inprogress">
+        <h4>قيد التنفيذ (In Progress)</h4>
+        <ul class="task-list" id="inprogressList"></ul>
+    </div>
+    <!-- عمود المكتملة -->
+    <div class="column" data-status="done">
+        <h4>المكتملة (Done)</h4>
+        <ul class="task-list" id="doneList"></ul>
+    </div>
+</div>
+
+<script>
+    const boardInput = document.getElementById('boardInput');
+    const addBoardBtn = document.getElementById('addBoardBtn');
+    const todoList = document.getElementById('todoList');
+
+    function createCard(text) {
+        const li = document.createElement('li');
+        li.className = 'task-card';
+        
+        const span = document.createElement('span');
+        span.textContent = text;
+        
+        const moveBtn = document.createElement('button');
+        moveBtn.textContent = 'نقل ➔';
+        moveBtn.className = 'move-btn';
+
+        // Event متقدم لنقل المهمة بين الأعمدة بناءً على حالتها الحالية
+        moveBtn.addEventListener('click', function() {
+            const currentColumn = li.closest('.column').dataset.status;
+            
+            if (currentColumn === 'todo') {
+                document.getElementById('inprogressList').appendChild(li);
+                moveBtn.textContent = 'إنجاز ✔';
+                moveBtn.style.background = '#22c55e';
+            } else if (currentColumn === 'inprogress') {
+                document.getElementById('doneList').appendChild(li);
+                moveBtn.textContent = 'حذف ✖';
+                moveBtn.style.background = '#ef4444';
+            } else if (currentColumn === 'done') {
+                li.remove(); // حذف نهائي عند اكتمال المراحل
+            }
+        });
+
+        li.appendChild(span);
+        li.appendChild(moveBtn);
+        todoList.appendChild(li);
+    }
+
+    addBoardBtn.addEventListener('click', function() {
+        const text = boardInput.value.trim();
+        if (text) {
+            createCard(text);
+            boardInput.value = '';
+            boardInput.focus();
+        }
+    });
+
+    boardInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && boardInput.value.trim() !== '') {
+            createCard(boardInput.value.trim());
+            boardInput.value = '';
+        }
+    });
+</script>
+
+</body>
+</html>

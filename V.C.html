@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكون بطاقة احترافي</title>
+    <!-- استدعاء Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 flex items-center justify-center min-h-screen">
+
+    <!-- حاوية البطاقة الرئيسية -->
+    <div class="max-w-sm bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl text-right transition-all duration-300 hover:border-slate-700">
+        
+        <!-- الصورة -->
+        <div class="w-full h-48 overflow-hidden rounded-xl mb-4">
+            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" 
+                 alt="صورة توضيحية" 
+                 class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+        </div>
+
+        <!-- العنوان -->
+        <h2 class="text-xl font-bold text-slate-100 mb-2">
+            عنوان العنصر البرمجي
+        </h2>
+
+        <!-- الوصف -->
+        <p class="text-sm text-slate-400 leading-relaxed mb-6">
+            هنا يأتي النص الوصفي الذي يوضح تفاصيل المحتوى بدقة واختصار. تصميم الواجهة يعتمد على التباين والوضوح لتحسين تجربة المستخدم.
+        </p>
+
+        <!-- زر التفاعل (CTA Button) -->
+        <button onclick="clickb()" type="button" class="w-full bg-indigo-300 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-xl transition-colors duration-200 shadow-lg shadow-indigo-600/20">
+            إدخال
+        </button>
+
+    </div>
+
+    <script>
+        function clickb(){
+            alert("تم الإدخال بنجاح")
+        }
+    </script>
+</body>
+</html>
